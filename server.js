@@ -94,7 +94,7 @@ app.get('{*path}', (req, res) => {
 
 // ─── Start ──────────────────────────────────────────────────
 
-app.listen(PORT, () => {
-    console.log(`\n  ⚡ Server Status Alarm running at http://localhost:${PORT}\n`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server Status Alarm running on port ${PORT}`);
     startChecker(30000);
 });
