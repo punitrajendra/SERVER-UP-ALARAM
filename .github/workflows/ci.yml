@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Docker image
+        run: docker build -t server-up-alarm .
+
+      - name: Smoke-test container starts and responds
+        run: |
+          docker run -d -p 3000:3000 --name smoke-test server-up-alarm
+          sleep 5
+          curl -f http://localhost:3000/ || (docker logs smoke-test && exit 1)
+          docker stop smoke-test
